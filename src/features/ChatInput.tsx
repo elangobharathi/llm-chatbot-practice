@@ -3,25 +3,27 @@ import { Send } from "lucide-react";
 
 interface ChatInputProps {
   input: string;
+  onInputChange: (input: string) => void;
   onSubmit: (input: string) => void;
   disabled?: boolean;
 }
 
 export default function ChatInput({
   input,
+  onInputChange,
   onSubmit,
   disabled,
 }: ChatInputProps) {
-  const handleSend = (newInput: string) => {
-    if (newInput.trim() && !disabled) {
-      onSubmit(newInput);
+  const handleSend = () => {
+    if (input.trim() && !disabled) {
+      onSubmit(input.trim());
     }
   };
 
   const handleKeyPress = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSend(input.trim());
+      handleSend();
     }
   };
 
@@ -32,7 +34,7 @@ export default function ChatInput({
           <div className="flex-1 relative">
             <textarea
               value={input}
-              onChange={(e) => handleSend(e.target.value)}
+              onChange={(e) => onInputChange(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Type your message... (Press Enter to send, Shift+Enter for new line)"
               disabled={disabled}
@@ -52,7 +54,7 @@ export default function ChatInput({
           </div>
 
           <button
-            onClick={() => handleSend(input)}
+            onClick={handleSend}
             disabled={!input.trim() || disabled}
             className="px-4 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
             title="Send message"

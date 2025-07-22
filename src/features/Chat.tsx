@@ -11,6 +11,7 @@ type ChatProps = {
 
 const Chat = ({ settings }: ChatProps) => {
   const [userInput, setUserInput] = useState("");
+  const [lastUserMessage, setLastUserMessage] = useState("");
 
   const {
     mutate: sendUserInput,
@@ -22,22 +23,18 @@ const Chat = ({ settings }: ChatProps) => {
     mutationFn: (input: string) => {
       return sendMessageToLLM(input, settings);
     },
-    onSuccess: (data) => {
-      console.log(data);
-    },
-    onError: (error) => {
-      console.error(error);
-    },
   });
 
   const handleSubmitUserInput = (input: string) => {
+    setLastUserMessage(input); // Store the user's message
     sendUserInput(input);
-    setUserInput("");
+    setUserInput(""); // Clear the input field
   };
 
   return (
     <>
       <DisplayResponse
+        userMessage={lastUserMessage}
         content={data}
         isLoading={isPending}
         isError={isError}
@@ -45,8 +42,9 @@ const Chat = ({ settings }: ChatProps) => {
       />
       <ChatInput
         input={userInput}
+        onInputChange={setUserInput}
         onSubmit={handleSubmitUserInput}
-        disabled={false}
+        disabled={isPending}
       />
     </>
   );
