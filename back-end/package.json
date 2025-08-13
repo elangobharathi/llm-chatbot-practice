@@ -9,12 +9,13 @@
     "debug": "DEBUG=llm-backend:* nodemon server.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
     "axios": "^1.6.0",
     "body-parser": "^1.20.2",
-    "debug": "^4.3.4"
+    "cors": "^2.8.5",
+    "debug": "^4.3.4",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "openai": "^5.12.2"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

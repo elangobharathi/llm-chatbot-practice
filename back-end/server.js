@@ -7,6 +7,8 @@ const debugRequest = require("debug")("llm-backend:request");
 const debugLLM = require("debug")("llm-backend:llm");
 require("dotenv").config();
 
+const sendMessageToLLMWithToolsCalling = require("./weather-mcp-client/index");
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -45,6 +47,37 @@ app.get("/health", (req, res) => {
     status: "Server is running",
     timestamp: new Date().toISOString(),
   });
+});
+
+// LLM completion endpoint with tools calling
+app.post("/api/completions-with-tools", async (req, res) => {
+  try {
+    const {
+      userPrompt,
+      model,
+      temperature = 0.7,
+      max_tokens = 1000,
+    } = req.body;
+
+    if (!userPrompt) {
+      debugRequest("Completion request rejected - missing user prompt");
+      return res.status(400).json({ error: "user prompt is required" });
+    }
+
+    const response = await sendMessageToLLMWithToolsCalling(userPrompt, {
+      apiKey: process.env.OPENAI_API_KEY,
+      apiUrl: process.env.OPENAI_BASE_URL,
+    });
+
+    res.json({ response });
+  } catch (error) {
+    debugLLM("Error calling LLM:", error.message);
+    console.error("Error calling LLM:", error.message);
+    res.status(500).json({
+      error: "Failed to process request",
+      details: error.response?.data || error.message,
+    });
+  }
 });
 
 // LLM Completion endpoint (for non-chat models)

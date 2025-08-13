@@ -2,7 +2,7 @@ import { useState } from "react";
 import ChatInput from "./ChatInput";
 import DisplayResponse from "./DisplayResponse";
 import { useMutation } from "@tanstack/react-query";
-import { sendMessageToLLM } from "../utils/api";
+import { sendMessageToLLMWithToolsCalling } from "../utils/api";
 import { ChatSettings } from "../types";
 
 type ChatProps = {
@@ -21,7 +21,7 @@ const Chat = ({ settings }: ChatProps) => {
     data,
   } = useMutation({
     mutationFn: (input: string) => {
-      return sendMessageToLLM(input, settings);
+      return sendMessageToLLMWithToolsCalling(input, settings);
     },
   });
 
